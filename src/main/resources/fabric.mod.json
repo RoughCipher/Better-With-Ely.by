@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "better_with_elyby",
+	"version": "${version}",
+	"name": "Better With Ely.by",
+	"description": "Skins and authorization using Ely.by",
+	"authors": [
+		"RoughCipher"
+	],
+	"contact": {
+		"homepage": "https://github.com/RoughCipher",
+		"sources": "https://github.com/RoughCipher/Better-With-Ely.by",
+		"issues": "https://github.com/RoughCipher/Better-With-Ely.by/issues"
+	},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"ru.roughcipher.better_with_elyby.BetterWithElyby"
+		]
+	},
+	"mixins": [
+		"better_with_elyby.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${fabricloader}",
+		"minecraft": "*",
+		"java": ">=${java}"
+	},
+	"suggests": {
+		"modmenu": ">=${modmenu}"
+	}
+}

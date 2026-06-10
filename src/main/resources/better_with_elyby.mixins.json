@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "package": "ru.roughcipher.better_with_elyby.mixin",
+  "compatibilityLevel": "JAVA_${java}",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "GetMonsterSkinUrlThreadMixin",
+    "GetSkinUrlThreadMixin",
+    "UUIDHelperMixin"
+  ],
+  "client": [
+    "client.PacketHandlerClientMixin",
+    "client.GameSettingsMixin",
+    "client.MinecraftMixin",
+    "client.MinecraftMixin"
+  ],
+  "server": [
+    "server.MinecraftServerMixin",
+    "server.PacketHandlerLoginMixin"
+  ]
+}
