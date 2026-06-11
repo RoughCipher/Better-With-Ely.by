@@ -33,6 +33,9 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: build
         run: ./gradlew build
 
