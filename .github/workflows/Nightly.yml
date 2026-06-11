@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           java-version: ${{ matrix.java }}
-          distribution: 'azul'
+          distribution: 'zulu'
           cache: gradle
 
       - name: build
