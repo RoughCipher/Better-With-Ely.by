@@ -3,15 +3,17 @@
 	"id": "better_with_elyby",
 	"version": "${version}",
 	"name": "Better With Ely.by",
-	"description": "Skins and authorization using Ely.by",
+	"description": "Skins and authorization using Ely.by.",
 	"authors": [
-		"RoughCipher"
+		"Mod author: RoughCipher",
+		"icon.png author: WennBoy"
 	],
 	"contact": {
 		"homepage": "https://github.com/RoughCipher",
 		"sources": "https://github.com/RoughCipher/Better-With-Ely.by",
 		"issues": "https://github.com/RoughCipher/Better-With-Ely.by/issues"
 	},
+	"icon": "icon.png",
 	"license": "MIT",
 	"environment": "*",
 	"entrypoints": {
