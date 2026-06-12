@@ -1,4 +1,4 @@
-name: Nightly
+name: Build
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: nightly-${{ github.ref }}
+  group: 8.0-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y p7zip-full
           cd build/libs
-          7z a -mx=9 ../../Better-With-Ely.by-Nightly.7z *
+          7z a -mx=9 ../../Better-With-Ely.by-8.0.7z *
           cd -
 
       - name: capture build artifacts
@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: Artifacts
-          path: Better-With-Ely.by-Nightly.7z
+          path: Better-With-Ely.by-8.0.7z
 
   release:
     needs: build
@@ -65,17 +65,17 @@ jobs:
           name: Artifacts
           path: artifacts
 
-      - name: Update nightly release
+      - name: Update release
         uses: andelf/nightly-release@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: nightly
-          name: 'Nightly Build'
+          tag_name: 8.0
+          name: '8.0 Build'
           body: |
-            ## Последняя Nightly сборка
+            ## Последняя сборка
             Собрано автоматически из `main` (Java 21, Linux).
-            Скачайте архив `Better-With-Ely.by-Nightly.7z`
+            Скачайте архив `Better-With-Ely.by-8.0.7z`
           files: |
             artifacts/*
 

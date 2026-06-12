@@ -5,8 +5,10 @@
 	"name": "Better With Ely.by",
 	"description": "Skins and authorization using Ely.by.",
 	"authors": [
-		"Mod author: RoughCipher",
-		"icon.png author: WennBoy"
+		"Mod: RoughCipher"
+	],
+	"contributors": [
+		"icon: WennBoy"
 	],
 	"contact": {
 		"homepage": "https://github.com/RoughCipher",
@@ -25,11 +27,11 @@
 		"better_with_elyby.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=${fabricloader}",
-		"minecraft": "*",
+		"fabricloader": "*",
+		"minecraft": ">=8.0-beta.1",
 		"java": ">=${java}"
 	},
 	"suggests": {
-		"modmenu": ">=${modmenu}"
+		"modmenu": "*"
 	}
 }

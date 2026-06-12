@@ -1,4 +1,7 @@
 import com.smushytaco.lwjgl_gradle.Preset
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
 	alias(libs.plugins.loom)
 	alias(libs.plugins.lwjgl)
@@ -12,7 +15,8 @@ val javaVersion: Provider<Int> = libs.versions.java.map { it.toInt() }
 
 base.archivesName = modName
 group = modGroup.get()
-version = modVersion.get()
+val baseVersion = modVersion.get()
+version = "$baseVersion${SimpleDateFormat("yyyyMMdd").format(Date())}"
 loom {
     customMinecraftMetadata.set("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/${libs.versions.bta.get()}/manifest.json")
 }
@@ -113,7 +117,7 @@ tasks {
 	}
 	processResources {
 		val resourceMap = mapOf(
-			"version" to modVersion.get(),
+			"version" to project.version.toString(),
 			"fabricloader" to libs.versions.loader.get(),
 			"halplibe" to libs.versions.halplibe.get(),
 			"java" to libs.versions.java.get(),
