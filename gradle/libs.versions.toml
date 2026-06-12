@@ -8,21 +8,21 @@ lwjglPlugin = "1.0.2"
 ##########################################################################
 # Java Configuration
 # The Java version the JDK will be for compiling and running code.
-java = "17"
+java = "8"
 # The Java version the JDK will be for running Gradle.
 gradleJava = "21"
 ##########################################################################
 # Mod Dependencies
 # Check this on https://downloads.betterthanadventure.net/bta-client/
-bta = "v8.0-pre2"
+bta = "v7.3_04"
 # Options are release, prerelease, nightly, and misc.
-btaChannel = "prerelease"
+btaChannel = "release"
 # Check this on https://maven.thesignalumproject.net/#/infrastructure/net/fabricmc/fabric-loader/
 loader = "0.18.4-bta.11"
 # Check this on https://github.com/Turnip-Labs/ModMenu/releases/latest/
-modMenu = "5.0.0"
+modMenu = "4.0.1"
 # Check this on https://github.com/Turnip-Labs/bta-halplibe/releases/latest/
-halplibe = "6.0.2"
+halplibe = "5.4.1"
 # Check this on https://github.com/Better-than-Adventure/legacy-lwjgl3/releases/latest/
 legacyLwjgl = "1.0.6"
 ##########################################################################

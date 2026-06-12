@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: 8_0-${{ github.ref }}
+  group: 7_3-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y p7zip-full
           cd build/libs
-          7z a -mx=9 ../../Better-With-Ely.by-8.0.7z *
+          7z a -mx=9 ../../Better-With-Ely.by-7.3.7z *
           cd -
 
       - name: capture build artifacts
@@ -52,11 +52,11 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: Artifacts
-          path: Better-With-Ely.by-8.0.7z
+          path: Better-With-Ely.by-7.3.7z
 
   release:
     needs: build
-    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/7_3' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
@@ -70,18 +70,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: 8_0
-          name: '8.0 Build'
+          tag_name: 7_3
+          name: '7.3 Build'
           body: |
             ## Последняя сборка
-            Собрано автоматически из `main` (Java 21, Linux).
-            Скачайте архив `Better-With-Ely.by-8.0.7z`
+            Собрано автоматически из `7_3` (Java 21, Linux).
+            Скачайте архив `Better-With-Ely.by-7.3.7z`
           files: |
             artifacts/*
 
   cleanup:
     needs: [build, release]
-    if: always() && (github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch')
+    if: always() && (github.ref == 'refs/heads/7_3' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     steps:
       - name: Delete temporary artifact
