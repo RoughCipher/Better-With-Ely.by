@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: 8.0-${{ github.ref }}
+  group: 8_0-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
