@@ -68,6 +68,7 @@ jobs:
       - name: Update release
         uses: andelf/nightly-release@main
         env:
+          TZ: Europe/Moscow  
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: 7_3
