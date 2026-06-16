@@ -13,7 +13,6 @@
   "client": [
     "client.PacketHandlerClientMixin",
     "client.GameSettingsMixin",
-    "client.MinecraftMixin",
     "client.MinecraftMixin"
   ],
   "server": [
