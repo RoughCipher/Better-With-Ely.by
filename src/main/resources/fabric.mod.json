@@ -20,7 +20,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"ru.roughcipher.better_with_elyby.BetterWithElyby"
+			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
 		]
 	},
 	"mixins": [

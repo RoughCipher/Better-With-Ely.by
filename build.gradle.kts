@@ -16,7 +16,7 @@ val javaVersion: Provider<Int> = libs.versions.java.map { it.toInt() }
 base.archivesName = modName
 group = modGroup.get()
 val baseVersion = modVersion.get()
-version = "$baseVersion${SimpleDateFormat("yyyyMMdd").format(Date())}"
+version = "$baseVersion-${SimpleDateFormat("yyyyMMdd").format(Date())}"
 loom {
     customMinecraftMetadata.set("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/${libs.versions.bta.get()}/manifest.json")
 }
