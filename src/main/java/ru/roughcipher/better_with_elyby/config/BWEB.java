@@ -15,20 +15,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class BWEBUrls {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BWEBUrls.class);
+public final class BWEB {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BWEB.class);
 	private static final Gson GSON = new GsonBuilder()
 		.setPrettyPrinting()
 		.disableHtmlEscaping()
 		.create();
 
-	public static final String OLD_UUID_LOOKUP = "https://api.minecraftservices.com/minecraft/profile/lookup/name/%s";
+	public static final String AUTH_SERVER = "https://authserver.ely.by";
 	public static final String OLD_SESSION = "http://session.minecraft.net/game/joinserver.jsp?user=";
 
-	public static String UUID_LOOKUP_URL = "https://authserver.ely.by/api/users/profiles/minecraft/%s";
-	public static String SESSION_JOIN_URL = "https://authserver.ely.by/session/legacy/join?user=";
-	public static String SESSION_HAS_JOINED_URL = "https://authserver.ely.by/session/legacy/hasJoined?user=";
+	public static String UUID_LOOKUP_URL = AUTH_SERVER + "/api/users/profiles/minecraft/%s";
+	public static String SESSION_JOIN_URL = AUTH_SERVER + "/session/legacy/join?user=";
+	public static String SESSION_HAS_JOINED_URL = AUTH_SERVER + "/session/legacy/hasJoined?user=";
 	public static String SKIN_PROFILE_URL = "https://skinsystem.ely.by/profile/";
+
+	public static boolean ENABLED = true;
+	public static boolean AUTO_DISABLE = true;
 
 	public static void load() {
 		File file = getConfigFile();
@@ -45,6 +48,8 @@ public final class BWEBUrls {
 	public static void save() {
 		File file = getConfigFile();
 		JsonObject obj = new JsonObject();
+		obj.addProperty("enabled", ENABLED);
+		obj.addProperty("autoDisable", AUTO_DISABLE);
 		obj.addProperty("uuidLookupUrl", UUID_LOOKUP_URL);
 		obj.addProperty("sessionJoinUrl", SESSION_JOIN_URL);
 		obj.addProperty("sessionHasJoinedUrl", SESSION_HAS_JOINED_URL);
@@ -56,20 +61,31 @@ public final class BWEBUrls {
 		}
 	}
 
-	private static String get(JsonObject obj, String key, String defaultValue) {
+	@SuppressWarnings("unchecked")
+	private static <T> T get(JsonObject obj, String key, T defaultValue) {
 		JsonElement el = obj.get(key);
 		if (el == null) {
-			obj.addProperty(key, defaultValue);
+			obj.add(key, GSON.toJsonTree(defaultValue));
 			return defaultValue;
 		}
-		return el.getAsString();
+		return GSON.fromJson(el, (Class<T>) defaultValue.getClass());
 	}
 
 	private static void updateValues(JsonObject obj) {
+		ENABLED = get(obj, "enabled", ENABLED);
+		AUTO_DISABLE = get(obj, "autoDisable", AUTO_DISABLE);
 		UUID_LOOKUP_URL = get(obj, "uuidLookupUrl", UUID_LOOKUP_URL);
 		SESSION_JOIN_URL = get(obj, "sessionJoinUrl", SESSION_JOIN_URL);
 		SESSION_HAS_JOINED_URL = get(obj, "sessionHasJoinedUrl", SESSION_HAS_JOINED_URL);
 		SKIN_PROFILE_URL = get(obj, "skinProfileUrl", SKIN_PROFILE_URL);
+	}
+
+	public static void disable() {
+		if (ENABLED && AUTO_DISABLE) {
+			ENABLED = false;
+			LOGGER.warn("Better With Ely.by mod has been automatically disabled.");
+			save();
+		}
 	}
 
 	private static void initFile(File file) {
@@ -100,5 +116,5 @@ public final class BWEBUrls {
 		load();
 	}
 
-	private BWEBUrls() {}
+	private BWEB() {}
 }

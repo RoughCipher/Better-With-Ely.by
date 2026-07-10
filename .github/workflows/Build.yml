@@ -121,7 +121,7 @@ jobs:
         with:
           tag: "8.0"
           commit: "main"
-          name: "Better With Ely.by Build"
+          name: "Better With Ely.By BTA 8.0-Pre"
           body: |
             **Дата и время сборки:** ${{ needs.build.outputs.datetime }} (МСК)
             **Последний коммит:** [`${{ needs.build.outputs.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
