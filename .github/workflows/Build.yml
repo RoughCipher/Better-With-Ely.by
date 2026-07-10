@@ -84,6 +84,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+
       - name: Download JAR artifact
         uses: actions/download-artifact@v7
         with:
