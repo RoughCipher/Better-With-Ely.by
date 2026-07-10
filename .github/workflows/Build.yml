@@ -120,7 +120,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: "8.0"
-          commit: "8.0"
+          commit: "main"
           name: "Better With Ely.by Build"
           body: |
             **Дата и время сборки:** ${{ needs.build.outputs.datetime }} (МСК)
