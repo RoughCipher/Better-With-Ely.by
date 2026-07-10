@@ -1,6 +1,7 @@
 import com.smushytaco.lwjgl_gradle.Preset
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.TimeZone
 
 plugins {
 	alias(libs.plugins.loom)
@@ -16,7 +17,10 @@ val javaVersion: Provider<Int> = libs.versions.java.map { it.toInt() }
 base.archivesName = modName
 group = modGroup.get()
 val baseVersion = modVersion.get()
-version = "$baseVersion-${SimpleDateFormat("yyyyMMdd").format(Date())}"
+val dateFormat = SimpleDateFormat("yyyyMMdd_HHmm")
+dateFormat.timeZone = TimeZone.getTimeZone("Europe/Moscow")
+val versionSuffix = dateFormat.format(Date())
+version = "$baseVersion-$versionSuffix"
 loom {
     customMinecraftMetadata.set("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/${libs.versions.bta.get()}/manifest.json")
 }

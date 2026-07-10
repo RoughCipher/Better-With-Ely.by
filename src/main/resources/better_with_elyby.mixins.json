@@ -10,12 +10,10 @@
     "UUIDHelperMixin"
   ],
   "client": [
-    "client.GameSettingsMixin",
     "client.MinecraftMixin",
     "client.PacketHandlerClientMixin"
   ],
   "server": [
-    "server.MinecraftServerMixin",
     "server.PacketHandlerLoginMixin"
   ]
 }
