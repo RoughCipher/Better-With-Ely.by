@@ -85,7 +85,7 @@ public class MinecraftClientMixin {
 			} else if (responseCode == 204) {
 				accountExists = false;
 			} else {
-				LOGGER.warn("Ely.by API code {} for UUID {}. User-Agent: {}. Disabling mod.", responseCode, uuid, USER_AGENT);
+				LOGGER.warn("Ely.By API code {} for UUID {}. User-Agent: {}. Disabling mod.", responseCode, uuid, USER_AGENT);
 				BWEB.disable();
 				connection.disconnect();
 				return;
@@ -97,13 +97,13 @@ public class MinecraftClientMixin {
 					BWEB.ENABLED = true;
 					BWEB.save();
 				}
-				LOGGER.info("Ely.by account verified. Mod enabled. User-Agent: {}", USER_AGENT);
+				LOGGER.info("Ely.By account verified. Mod enabled. User-Agent: {}", USER_AGENT);
 			} else {
-				LOGGER.warn("Ely.by account not found for UUID {}. User-Agent: {}. Disabling mod.", uuid, USER_AGENT);
+				LOGGER.warn("Ely.By account not found for UUID {}. User-Agent: {}. Disabling mod.", uuid, USER_AGENT);
 				BWEB.disable();
 			}
 		} catch (Exception e) {
-			LOGGER.warn("Ely.by check failed: {}. User-Agent: {}. Disabling mod.", e.getMessage(), USER_AGENT);
+			LOGGER.warn("Ely.By check failed: {}. User-Agent: {}. Disabling mod.", e.getMessage(), USER_AGENT);
 			BWEB.disable();
 		}
 	}

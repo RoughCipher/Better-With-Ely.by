@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "better_with_elyby",
+	"id": "bweb",
 	"version": "${version}",
 	"name": "Better With Ely.By",
 	"description": "Skins and authorization using Ely.By.",
