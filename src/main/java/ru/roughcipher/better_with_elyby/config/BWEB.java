@@ -36,6 +36,9 @@ public final class BWEB {
 	public static void load() {
 		File file = getConfigFile();
 		if (!file.exists()) initFile(file);
+
+		ENABLED = true;
+
 		try (FileReader reader = new FileReader(file)) {
 			JsonObject obj = GSON.fromJson(reader, JsonObject.class);
 			updateValues(obj);
@@ -48,7 +51,6 @@ public final class BWEB {
 	public static void save() {
 		File file = getConfigFile();
 		JsonObject obj = new JsonObject();
-		obj.addProperty("enabled", ENABLED);
 		obj.addProperty("autoDisable", AUTO_DISABLE);
 		obj.addProperty("uuidLookupUrl", UUID_LOOKUP_URL);
 		obj.addProperty("sessionJoinUrl", SESSION_JOIN_URL);
@@ -72,7 +74,6 @@ public final class BWEB {
 	}
 
 	private static void updateValues(JsonObject obj) {
-		ENABLED = get(obj, "enabled", ENABLED);
 		AUTO_DISABLE = get(obj, "autoDisable", AUTO_DISABLE);
 		UUID_LOOKUP_URL = get(obj, "uuidLookupUrl", UUID_LOOKUP_URL);
 		SESSION_JOIN_URL = get(obj, "sessionJoinUrl", SESSION_JOIN_URL);
@@ -84,7 +85,6 @@ public final class BWEB {
 		if (ENABLED && AUTO_DISABLE) {
 			ENABLED = false;
 			LOGGER.warn("Better With Ely.By mod has been automatically disabled.");
-			save();
 		}
 	}
 
