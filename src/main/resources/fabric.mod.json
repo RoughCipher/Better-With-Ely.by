@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "better_with_elyby",
 	"version": "${version}",
-	"name": "Better With Ely.by",
-	"description": "Skins and authorization using Ely.by.",
+	"name": "Better With Ely.By",
+	"description": "Skins and authorization using Ely.By.",
 	"authors": [
 		"Mod: RoughCipher"
 	],
@@ -20,7 +20,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"ru.roughcipher.better_with_elyby.BetterWithElyby"
+			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
 		]
 	},
 	"mixins": [

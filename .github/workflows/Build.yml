@@ -1,9 +1,10 @@
-name: Build
+name: Build and Release
 
 on:
   workflow_dispatch:
-  pull_request:
   push:
+    branches:
+      - "7.3"
 
 permissions:
   contents: write
@@ -17,8 +18,13 @@ jobs:
     strategy:
       matrix:
         java: [21]
-        os: [ubuntu-latest]
+        os: [ubuntu-slim]
     runs-on: ${{ matrix.os }}
+    outputs:
+      datetime: ${{ steps.date.outputs.datetime }}
+      sha: ${{ steps.commit.outputs.sha }}
+      msg: ${{ steps.commit.outputs.msg }}
+      jar_name: ${{ steps.jar.outputs.jar_name }}
     steps:
       - name: checkout repository
         uses: actions/checkout@v6
@@ -39,53 +45,90 @@ jobs:
       - name: build
         run: ./gradlew build
 
-      - name: Package artifacts into 7z
-        if: ${{ runner.os == 'Linux' && matrix.java == '21' }}
+      - name: Find main JAR
+        id: jar
         run: |
-          sudo apt-get update && sudo apt-get install -y p7zip-full
-          cd build/libs
-          7z a -mx=9 ../../Better-With-Ely.by-7.3.7z *
-          cd -
+          JAR_FILE=$(find build/libs -name "*.jar" ! -name "*-sources.jar" ! -name "*-javadoc.jar" | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Ошибка: не найден файл"
+            exit 1
+          fi
+          JAR_NAME=$(basename "$JAR_FILE")
+          echo "Найден JAR: $JAR_NAME"
+          echo "jar_name=$JAR_NAME" >> $GITHUB_OUTPUT
+          cp "$JAR_FILE" "$JAR_NAME"
 
-      - name: capture build artifacts
-        if: ${{ runner.os == 'Linux' && matrix.java == '21' }}
+      - name: Get current date and time (Moscow time)
+        id: date
+        env:
+          TZ: Europe/Moscow
+        run: echo "datetime=$(date +'%Y%m%d_%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Get last commit info
+        id: commit
+        run: |
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          MSG=$(git log -1 --pretty=%s | sed 's/"/\\"/g')
+          echo "msg=$MSG" >> $GITHUB_OUTPUT
+
+      - name: Upload JAR artifact
         uses: actions/upload-artifact@v6
         with:
-          name: Artifacts
-          path: Better-With-Ely.by-7.3.7z
+          name: bweb-jar
+          path: ${{ steps.jar.outputs.jar_name }}
 
   release:
     needs: build
-    if: github.ref == 'refs/heads/7_3' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/7.3' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-slim
+    permissions:
+      contents: write
     steps:
-      - name: Download artifacts
+      - name: checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: "7.3"
+
+      - name: Download JAR artifact
         uses: actions/download-artifact@v7
         with:
-          name: Artifacts
+          name: bweb-jar
           path: artifacts
 
-      - name: Update release
-        uses: andelf/nightly-release@main
+      - name: Delete old release assets
         env:
-          TZ: Europe/Moscow  
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: 7_3
-          name: '7.3 Build'
-          body: |
-            ## Последняя сборка
-            Собрано автоматически из `7_3` (Java 21, Linux).
-            Скачайте архив `Better-With-Ely.by-7.3.7z`
-          files: |
-            artifacts/*
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_ID=$(gh release view "7.3" --json id -q ".id" 2>/dev/null || echo "")
+          if [ -n "$RELEASE_ID" ]; then
+            gh release view "7.3" --json assets -q ".assets[].name" | while read -r name; do
+              if [[ "$name" == *.jar ]]; then
+                gh release delete-asset "7.3" "$name" --yes
+              fi
+            done
+          else
+            echo "Релиз 7.3 ещё не создан, пропуск"
+          fi
 
-  cleanup:
-    needs: [build, release]
-    if: always() && (github.ref == 'refs/heads/7_3' || github.event_name == 'workflow_dispatch')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delete temporary artifact
-        uses: geekyeggo/delete-artifact@v5
+      - name: Move tag to current commit
+        run: |
+          git tag -f "7.3"
+          git push -f origin refs/tags/7.3
+
+      - name: Create or Update Release
+        uses: ncipollo/release-action@v1
         with:
-          name: Artifacts
+          tag: "7.3"
+          commit: "7.3"
+          name: "Better With Ely.By BTA 7.3"
+          body: |
+            **Дата и время сборки:** ${{ needs.build.outputs.datetime }} (МСК)
+            **Последний коммит:** [`${{ needs.build.outputs.sha }}`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+            **Сообщение:** ${{ needs.build.outputs.msg }}
+          draft: false
+          prerelease: false
+          artifacts: "artifacts/*.jar"
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}

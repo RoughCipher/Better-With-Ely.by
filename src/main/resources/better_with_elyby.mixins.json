@@ -6,17 +6,15 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "GetMonsterSkinUrlThreadMixin",
-    "GetSkinUrlThreadMixin",
+    "SkinUrlThreadMixin",
     "UUIDHelperMixin"
   ],
   "client": [
-    "client.PacketHandlerClientMixin",
-    "client.GameSettingsMixin",
-    "client.MinecraftMixin"
+    "client.MinecraftMixin",
+    "client.MinecraftClientMixin",
+    "client.PacketHandlerClientMixin"
   ],
   "server": [
-    "server.MinecraftServerMixin",
     "server.PacketHandlerLoginMixin"
   ]
 }
