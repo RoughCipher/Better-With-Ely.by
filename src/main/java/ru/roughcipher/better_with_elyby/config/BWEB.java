@@ -83,7 +83,7 @@ public final class BWEB {
 	public static void disable() {
 		if (ENABLED && AUTO_DISABLE) {
 			ENABLED = false;
-			LOGGER.warn("Better With Ely.by mod has been automatically disabled.");
+			LOGGER.warn("Better With Ely.By mod has been automatically disabled.");
 			save();
 		}
 	}

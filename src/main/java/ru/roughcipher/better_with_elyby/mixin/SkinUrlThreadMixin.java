@@ -33,7 +33,7 @@ public class SkinUrlThreadMixin {
 				cir.cancel();
 			}
 		} catch (Exception e) {
-			LOGGER.warn("Can't connect to Ely.by API for {}. Using default skin.", name);
+			LOGGER.warn("Can't connect to Ely.By API for {}. Using default skin.", name);
 		}
 	}
 }

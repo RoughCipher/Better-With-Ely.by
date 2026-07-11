@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "better_with_elyby",
+	"id": "bweb",
 	"version": "${version}",
-	"name": "Better With Ely.by",
-	"description": "Skins and authorization using Ely.by.",
+	"name": "Better With Ely.By",
+	"description": "Skins and authorization using Ely.By.",
 	"authors": [
 		"Mod: RoughCipher"
 	],
