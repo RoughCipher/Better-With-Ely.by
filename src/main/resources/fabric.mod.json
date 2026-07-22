@@ -30,8 +30,5 @@
 		"fabricloader": "*",
 		"minecraft": ">=8.0-beta.1",
 		"java": ">=${java}"
-	},
-	"suggests": {
-		"modmenu": "*"
 	}
 }
