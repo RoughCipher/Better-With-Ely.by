@@ -20,10 +20,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
+			"ru.roughcipher.better_with_elyby.BetterWithElyby"
 		],
 		"server": [
-			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
+			"ru.roughcipher.better_with_elyby.BetterWithElyby"
 		]
 	},
 	"mixins": [

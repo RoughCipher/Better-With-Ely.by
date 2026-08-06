@@ -26,12 +26,22 @@ loom {
 repositories {
     mavenCentral()
     maven("https://maven.fabricmc.net/") { name = "Fabric" }
-    maven("https://maven.thesignalumproject.net/infrastructure") { name = "SignalumMavenInfrastructure" }
-    maven("https://maven.thesignalumproject.net/releases") { name = "SignalumMavenReleases" }
-	maven("https://maven.thesignalumproject.net/nightly") { name = "SignalumMavenNightly" }
-    ivy("https://github.com/Better-than-Adventure") {
-        patternLayout { artifact("[organisation]/releases/download/[revision]/[module]-bta-[revision].jar") }
+    // fabric-loader - https://github.com/Turnip-Labs/fabric-loader/releases/download/0.18.4-bta.11/fabric-loader-0.18.4-bta.11.jar
+    ivy("https://github.com/Turnip-Labs") {
+        patternLayout {
+            artifact("/fabric-loader/releases/download/[revision]/fabric-loader-[revision].jar")
+        }
         metadataSources { artifact() }
+        content { includeGroup("bta.loader") }
+    }
+    // legacy-lwjgl3 - https://github.com/Better-than-Adventure/legacy-lwjgl3/releases/download/1.0.6/legacy-lwjgl3-bta-1.0.6.jar
+    ivy("https://github.com/Better-than-Adventure") {
+        patternLayout {
+            artifact("/[module]/releases/download/[revision]/[module]-bta-[revision].jar")
+            artifact("/[module]/releases/download/[revision]/[module]-[revision].jar")
+        }
+        metadataSources { artifact() }
+        content { includeGroup("legacy-lwjgl3") }
     }
     ivy("https://downloads.betterthanadventure.net/bta-client/${libs.versions.btaChannel.get()}/") {
         patternLayout { artifact("/v[revision]/client.jar") }

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import ru.roughcipher.better_with_elyby.command.BwebCommands;
 import ru.roughcipher.better_with_elyby.config.BWEB;
 
-public class BetterWithElyBy implements ModInitializer, DedicatedServerModInitializer {
+public class BetterWithElyby implements ModInitializer, DedicatedServerModInitializer {
 	public static final String MOD_ID = "bweb";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
