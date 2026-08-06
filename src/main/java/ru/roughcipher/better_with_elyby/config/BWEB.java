@@ -23,25 +23,47 @@ public final class BWEB {
 		.create();
 
 	public static final String AUTH_SERVER = "https://authserver.ely.by";
+	public static final String USER_AGENT = buildUserAgent();
+
+	private static String buildUserAgent() {
+		String bta = "unknown";
+		try {
+			Class<?> versionClass = Class.forName("net.minecraft.core.Version");
+			Object val = versionClass.getField("VERSION").get(null);
+			if (val != null) bta = val.toString();
+		} catch (Exception ignored) {
+		}
+		return "BWEB (BTA " + bta + "; Java " +
+			System.getProperty("java.version") + "; " +
+			System.getProperty("os.name") + " " +
+			System.getProperty("os.arch") + ")";
+	}
+
 	public static final String OLD_SESSION = "http://session.minecraft.net/game/joinserver.jsp?user=";
+	public static final String OLD_HAS_JOINED = "http://session.minecraft.net/game/checkserver.jsp?user=";
 
 	public static String UUID_LOOKUP_URL = AUTH_SERVER + "/api/users/profiles/minecraft/%s";
 	public static String SESSION_JOIN_URL = AUTH_SERVER + "/session/legacy/join?user=";
 	public static String SESSION_HAS_JOINED_URL = AUTH_SERVER + "/session/legacy/hasJoined?user=";
 	public static String SKIN_PROFILE_URL = "https://skinsystem.ely.by/profile/";
 
-	public static boolean ENABLED = true;
-	public static boolean AUTO_DISABLE = true;
+	public static boolean IS_ELY_ACCOUNT = false;
+	public static boolean IS_OFFLINE_ACCOUNT = false;
+	public static String UUID_PREFERENCE = "ely";
+	public static boolean ELY_ONLY = false;
+	public static boolean WARN_MISSING_MOD = true;
+	public static final int WARN_MISSING_MOD_DELAY_SEC = 3;
+	public static final String WARN_MISSING_MOD_MESSAGE =
+		"[BWEB] Install Better With Ely.by to see skins of Ely.by players.";
 
 	public static void load() {
 		File file = getConfigFile();
 		if (!file.exists()) initFile(file);
-
-		ENABLED = true;
-
+		IS_ELY_ACCOUNT = false;
+		IS_OFFLINE_ACCOUNT = false;
 		try (FileReader reader = new FileReader(file)) {
 			JsonObject obj = GSON.fromJson(reader, JsonObject.class);
-			updateValues(obj);
+			if (obj != null) updateValues(obj);
 		} catch (IOException e) {
 			LOGGER.error("Failed to load config, using defaults", e);
 		}
@@ -51,7 +73,9 @@ public final class BWEB {
 	public static void save() {
 		File file = getConfigFile();
 		JsonObject obj = new JsonObject();
-		obj.addProperty("autoDisable", AUTO_DISABLE);
+		obj.addProperty("uuidPreference", UUID_PREFERENCE);
+		obj.addProperty("elyOnly", ELY_ONLY);
+		obj.addProperty("warnMissingMod", WARN_MISSING_MOD);
 		obj.addProperty("uuidLookupUrl", UUID_LOOKUP_URL);
 		obj.addProperty("sessionJoinUrl", SESSION_JOIN_URL);
 		obj.addProperty("sessionHasJoinedUrl", SESSION_HAS_JOINED_URL);
@@ -74,18 +98,14 @@ public final class BWEB {
 	}
 
 	private static void updateValues(JsonObject obj) {
-		AUTO_DISABLE = get(obj, "autoDisable", AUTO_DISABLE);
+		String pref = get(obj, "uuidPreference", UUID_PREFERENCE);
+		UUID_PREFERENCE = "mojang".equals(pref) ? "mojang" : "ely";
+		ELY_ONLY = get(obj, "elyOnly", ELY_ONLY);
+		WARN_MISSING_MOD = get(obj, "warnMissingMod", WARN_MISSING_MOD);
 		UUID_LOOKUP_URL = get(obj, "uuidLookupUrl", UUID_LOOKUP_URL);
 		SESSION_JOIN_URL = get(obj, "sessionJoinUrl", SESSION_JOIN_URL);
 		SESSION_HAS_JOINED_URL = get(obj, "sessionHasJoinedUrl", SESSION_HAS_JOINED_URL);
 		SKIN_PROFILE_URL = get(obj, "skinProfileUrl", SKIN_PROFILE_URL);
-	}
-
-	public static void disable() {
-		if (ENABLED && AUTO_DISABLE) {
-			ENABLED = false;
-			LOGGER.warn("Better With Ely.By mod has been automatically disabled.");
-		}
 	}
 
 	private static void initFile(File file) {
@@ -111,10 +131,4 @@ public final class BWEB {
 		}
 		return configDir.resolve("bweb.json").toFile();
 	}
-
-	static {
-		load();
-	}
-
-	private BWEB() {}
 }

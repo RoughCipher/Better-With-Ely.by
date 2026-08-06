@@ -5,7 +5,7 @@ import net.minecraft.core.util.helper.UUIDHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import ru.roughcipher.better_with_elyby.config.BWEB;
+import ru.roughcipher.better_with_elyby.auth.UuidResolver;
 
 @Mixin(value = UUIDHelper.class, remap = false)
 public class UUIDHelperMixin {
@@ -17,21 +17,18 @@ public class UUIDHelperMixin {
 			target = "Lcom/b100/utils/StringUtils;getWebsiteContentAsString(Ljava/lang/String;)Ljava/lang/String;"
 		)
 	)
-	private static String redirectUuidLookup(String originalUrl) {
-		if (!BWEB.ENABLED) {
-			return StringUtils.getWebsiteContentAsString(originalUrl);
-		}
+	private static String redirectUuidLookup(String url) {
+		String playerName = url.substring(url.lastIndexOf('/') + 1);
+		int q = playerName.indexOf('?');
+		if (q >= 0) playerName = playerName.substring(0, q);
 
-		String playerName = originalUrl.substring(originalUrl.lastIndexOf('/') + 1);
-		String elyUrl = String.format(BWEB.UUID_LOOKUP_URL, playerName);
 		try {
-			String response = StringUtils.getWebsiteContentAsString(elyUrl);
-			if (response != null && !response.isEmpty() && !response.equals("{}")) {
-				return response;
+			String resolved = UuidResolver.resolveForLookup(playerName);
+			if (resolved != null && !resolved.isEmpty()) {
+				return resolved;
 			}
-			return StringUtils.getWebsiteContentAsString(originalUrl);
-		} catch (Exception e) {
-			return StringUtils.getWebsiteContentAsString(originalUrl);
+		} catch (Exception ignored) {
 		}
+		return StringUtils.getWebsiteContentAsString(url);
 	}
 }

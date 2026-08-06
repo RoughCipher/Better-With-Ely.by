@@ -15,6 +15,8 @@
     "client.PacketHandlerClientMixin"
   ],
   "server": [
-    "server.PacketHandlerLoginMixin"
+    "server.PacketHandlerLoginMixin",
+    "server.PacketHandlerServerMixin",
+    "server.PlayerListMixin"
   ]
 }

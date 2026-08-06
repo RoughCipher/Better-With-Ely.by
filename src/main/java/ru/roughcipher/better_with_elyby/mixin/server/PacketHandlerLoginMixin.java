@@ -9,6 +9,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import ru.roughcipher.better_with_elyby.config.BWEB;
+import ru.roughcipher.better_with_elyby.auth.AuthSource;
+import ru.roughcipher.better_with_elyby.auth.PlayerAuthTracker;
+import ru.roughcipher.better_with_elyby.auth.UuidResolver;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,36 +31,59 @@ public abstract class PacketHandlerLoginMixin {
 			target = "Ljava/lang/Thread;start()V"
 		)
 	)
-	private void redirectSessionCheck(Thread originalThread, PacketLogin loginPacket) {
+	private void redirectSessionCheck(Thread originalThread, PacketLogin packetLogin) {
 		PacketHandlerLogin self = (PacketHandlerLogin) (Object) this;
-
-		if (!BWEB.ENABLED) {
-			originalThread.start();
-			return;
-		}
 
 		new Thread(() -> {
 			try {
 				String serverId = PacketHandlerLogin.getServerId(self);
-				String encodedUser = URLEncoder.encode(loginPacket.username, StandardCharsets.UTF_8);
+				String encodedUser = URLEncoder.encode(packetLogin.username, StandardCharsets.UTF_8);
 				String encodedServerId = URLEncoder.encode(serverId, StandardCharsets.UTF_8);
+				String query = encodedUser + "&serverId=" + encodedServerId;
 
-				URL url = new URL(BWEB.SESSION_HAS_JOINED_URL + encodedUser + "&serverId=" + encodedServerId);
-
-				try (BufferedReader reader = new BufferedReader(
-					new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-					String response = reader.readLine();
-					if ("YES".equals(response)) {
-						PacketHandlerLogin.setLoginPacket(self, loginPacket);
-					} else {
-						self.kickUser("Failed to verify username!");
-					}
+				AuthSource source = null;
+				if (checkHasJoined(BWEB.SESSION_HAS_JOINED_URL + query)) {
+					source = AuthSource.ELY;
+					LOGGER.info("Player '{}' verified via Ely.by", packetLogin.username);
+				} else if (checkHasJoined(BWEB.OLD_HAS_JOINED + query)) {
+					source = AuthSource.MOJANG;
+					LOGGER.info("Player '{}' verified via Mojang", packetLogin.username);
 				}
+
+				if (source == null) {
+					self.kickUser("Failed to verify username!");
+					return;
+				}
+
+				String uuid = UuidResolver.resolve(packetLogin.username, source);
+				if (uuid == null) {
+					LOGGER.warn("Could not resolve UUID for '{}' via {} — login may use offline UUID", packetLogin.username, source);
+				} else {
+					LOGGER.info("Bound UUID for '{}' via {}: {}", packetLogin.username, source, uuid);
+				}
+				PlayerAuthTracker.put(packetLogin.username, uuid, source);
+
+				PacketHandlerLogin.setLoginPacket(self, packetLogin);
 			} catch (Exception exception) {
 				LOGGER.error("Exception while trying to verify user '{}', kicking!",
 					self.getUserAndIPString(), exception);
 				self.kickUser("Failed to verify username! [internal error " + exception + "]");
 			}
 		}).start();
+	}
+
+	@Unique
+	private static boolean checkHasJoined(String fullUrl) {
+		try {
+			URL url = new URL(fullUrl);
+			try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
+				String response = reader.readLine();
+				return "YES".equals(response);
+			}
+		} catch (Exception e) {
+			LOGGER.debug("hasJoined check failed for {}: {}", fullUrl, e.getMessage());
+			return false;
+		}
 	}
 }

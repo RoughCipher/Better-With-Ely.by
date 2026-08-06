@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "bweb",
 	"version": "${version}",
-	"name": "Better With Ely.By",
-	"description": "Skins and authorization using Ely.By.",
+	"name": "Better With Ely.by",
+	"description": "Ely.by + Mojang auth and skins.",
 	"authors": [
 		"Mod: RoughCipher"
 	],
@@ -20,6 +20,9 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
+			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
+		],
+		"server": [
 			"ru.roughcipher.better_with_elyby.BetterWithElyBy"
 		]
 	},
